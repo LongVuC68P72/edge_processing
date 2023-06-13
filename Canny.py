@@ -87,22 +87,21 @@ def edge_tracking(threshold_img, weak_i, weak_j):
     return edge_tracking_img
 
 
+if __name__ == "__main__":
+    img = cv2.imread("D:\Image_Processing\canny.png", 0)
+    # Bước 1: Làm mờ ảnh
+    blur_img = cv2.GaussianBlur(img, ksize=(5, 5), sigmaX=1, sigmaY=1)
+    # Bước 2: Tính Gradient độ xám
+    sobel_filter_img, theta = sobel_filter(blur_img)
+    # Bước 3: Thực hiện thuật toán Non-maximum suppression để làm mỏng biên
+    non_maximum_suppression_img = non_maximum_suppression(sobel_filter_img, theta)
+    # Bước 4: Ngưỡng kép tùy vào từng ảnh mà chọn tỉ lệ ngưỡng cao, thấp
+    double_threshold_img, weak_i, weak_j = double_threshold(non_maximum_suppression_img, 0.03, 0.07)
+    # Bước 5: Theo dõi cạnh theo độ trễ (Edge Tracking by Hysteresis)
+    edge_tracking_img = edge_tracking(double_threshold_img, weak_i, weak_j)
 
-img = cv2.imread("D:\Image_Processing\canny.png", 0)
-# Bước 1: Làm mờ ảnh
-blur_img = cv2.GaussianBlur(img, ksize=(5, 5), sigmaX=1, sigmaY=1)
-# Bước 2: Tính Gradient độ xám
-sobel_filter_img, theta = sobel_filter(blur_img)
-# Bước 3: Thực hiện thuật toán Non-maximum suppression để làm mỏng biên
-non_maximum_suppression_img = non_maximum_suppression(sobel_filter_img, theta)
-# Bước 4: Ngưỡng kép tùy vào từng ảnh mà chọn tỉ lệ ngưỡng cao, thấp
-double_threshold_img, weak_i, weak_j = double_threshold(non_maximum_suppression_img, 0.03, 0.07)
-# Bước 5: Theo dõi cạnh theo độ trễ (Edge Tracking by Hysteresis)
-edge_tracking_img = edge_tracking(double_threshold_img, weak_i, weak_j)
-
-
-edge_Canny = cv2.Canny(blur_img, 100, 200)
-cv2.imshow("Code chay", edge_tracking_img)
-cv2.imshow("Canny", edge_Canny)
-cv2.waitKey()
-cv2.destroyAllWindows()
+    edge_Canny = cv2.Canny(blur_img, 100, 200)
+    cv2.imshow("Code chay", edge_tracking_img)
+    cv2.imshow("Canny", edge_Canny)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
